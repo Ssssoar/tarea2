@@ -4,11 +4,15 @@ using UnityEngine.InputSystem;
 public class Jump : MonoBehaviour{
     [SerializeField] Rigidbody2D rb;
     [SerializeField] InputAction jumpAction;
+    [SerializeField] Movement moveComp;
     [SerializeField] float chargeSpeed; //in seconds
     [SerializeField] float minJumpForce;
     [SerializeField] float maxJumpForce;
+    [SerializeField] float forwardForce;
+    [SerializeField] int maxJumps;
 
     float jumpCharge; //0 to 1
+    int jumpsStored = 1;
 
     void Start(){
         jumpAction.Enable();
@@ -16,10 +20,12 @@ public class Jump : MonoBehaviour{
 
     void Update(){
         bool holding = InputToBool();
-        if (holding){
-            Charge();
-        }else if (jumpCharge > 0f){
-            ExecuteJump();
+        if (jumpsStored > 0){
+            if (holding){
+                Charge();
+            }else if (jumpCharge > 0f){
+                ExecuteJump();
+            }
         }
     }
 
@@ -31,6 +37,9 @@ public class Jump : MonoBehaviour{
     }
 
     void Charge(){
+        if ((jumpCharge == 0) && (moveComp != null)){
+            moveComp.Block();
+        }
         jumpCharge += chargeSpeed * Time.deltaTime;
         if (jumpCharge >= 1f){
             jumpCharge = 1f;
@@ -41,5 +50,19 @@ public class Jump : MonoBehaviour{
         float actualJumpForce = ((maxJumpForce - minJumpForce) * jumpCharge) + minJumpForce;
         rb.linearVelocityY = actualJumpForce;
         jumpCharge = 0f;
+        if (moveComp != null){
+            float direction = 0f;
+            if (moveComp.GetLastFacing() == Enums.Facing.Left){
+                direction = -1f;
+            }else if(moveComp.GetLastFacing() == Enums.Facing.Right){
+                direction = 1f;
+            }
+            rb.linearVelocityX = forwardForce * direction;
+        }
+        jumpsStored--;
+    }
+
+    public void RestoreJumps(){
+        jumpsStored = maxJumps;
     }
 }

@@ -6,13 +6,16 @@ public class Movement : MonoBehaviour{
 
     float currentVelocity;
     Enums.Facing lastFacing;
+    bool blocked;
 
     // Update is called once per frame
     void Update(){
         float movement = DecideHorizontalMovement();
-        float displacement = movement * moveSpeed * Time.deltaTime;
-        rb.linearVelocity = new Vector2(displacement, rb.linearVelocity.y);
-        currentVelocity = Mathf.Abs(displacement);
+        if(!blocked){
+            float displacement = movement * moveSpeed * Time.deltaTime;
+            rb.linearVelocity = new Vector2(displacement, rb.linearVelocity.y);
+            currentVelocity = Mathf.Abs(displacement);
+        }
         UpdateFacing(movement);
     }
 
@@ -41,5 +44,18 @@ public class Movement : MonoBehaviour{
 
     public Enums.Facing GetLastFacing(){
         return lastFacing;
+    }
+
+    public void Block(){
+        rb.linearVelocity = new Vector2(0f, rb.linearVelocityY);
+        blocked = true;
+    }
+    
+    public void UnBlock(){
+        blocked = false;
+    }
+
+    public bool IsBlocked(){
+        return blocked;
     }
 }
