@@ -2,8 +2,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class Jump : MonoBehaviour{
+    [SerializeField] PlayerInput inputComp;
     [SerializeField] Rigidbody2D rb;
-    [SerializeField] InputAction jumpAction;
     [SerializeField] Movement moveComp;
     [SerializeField] float chargeSpeed; //in seconds
     [SerializeField] float minJumpForce;
@@ -14,12 +14,8 @@ public class Jump : MonoBehaviour{
     float jumpCharge; //0 to 1
     int jumpsStored = 1;
 
-    void Start(){
-        jumpAction.Enable();
-    }
-
     void Update(){
-        bool holding = InputToBool();
+        bool holding = inputComp.GetJump();
         if (jumpsStored > 0){
             if (holding){
                 Charge();
@@ -27,13 +23,6 @@ public class Jump : MonoBehaviour{
                 ExecuteJump();
             }
         }
-    }
-
-    bool InputToBool(){
-        if (jumpAction.ReadValue<float>() == 0)
-            return false;
-        else
-            return true;
     }
 
     void Charge(){
@@ -58,8 +47,14 @@ public class Jump : MonoBehaviour{
                 direction = 1f;
             }
             rb.linearVelocityX = forwardForce * direction;
+            Debug.Log(rb.linearVelocityX);
         }
         jumpsStored--;
+    }
+
+    public void ForceJump(){
+        jumpCharge = 0.5f;
+        ExecuteJump();
     }
 
     public void RestoreJumps(){

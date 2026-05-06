@@ -1,8 +1,10 @@
 using UnityEngine;
 
 public class Movement : MonoBehaviour{
+    [SerializeField] PlayerInput inputComp;
     [SerializeField] float moveSpeed;
     [SerializeField] Rigidbody2D rb;
+    [SerializeField] bool debug;
 
     float currentVelocity;
     Enums.Facing lastFacing;
@@ -10,17 +12,13 @@ public class Movement : MonoBehaviour{
 
     // Update is called once per frame
     void Update(){
-        float movement = DecideHorizontalMovement();
+        float movement = inputComp.GetMovement();
         if(!blocked){
             float displacement = movement * moveSpeed * Time.deltaTime;
             rb.linearVelocity = new Vector2(displacement, rb.linearVelocity.y);
             currentVelocity = Mathf.Abs(displacement);
         }
         UpdateFacing(movement);
-    }
-
-    public virtual float DecideHorizontalMovement(){
-        return 0f;
     }
 
     void UpdateFacing(float movement){
@@ -46,13 +44,21 @@ public class Movement : MonoBehaviour{
         return lastFacing;
     }
 
+    public void SetFacing(Enums.Facing facing){
+        lastFacing = facing;
+    }
+
     public void Block(){
         rb.linearVelocity = new Vector2(0f, rb.linearVelocityY);
         blocked = true;
+        if (debug)
+            Debug.Log("Blocked");
     }
     
     public void UnBlock(){
         blocked = false;
+        if (debug)
+            Debug.Log("Unblocked");
     }
 
     public bool IsBlocked(){
