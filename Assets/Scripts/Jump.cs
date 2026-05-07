@@ -47,7 +47,6 @@ public class Jump : MonoBehaviour{
                 direction = 1f;
             }
             rb.linearVelocityX = forwardForce * direction;
-            Debug.Log(rb.linearVelocityX);
         }
         jumpsStored--;
     }

@@ -7,6 +7,8 @@ TagManager:
   - Floor
   - P1Shove
   - P2Shove
+  - P1
+  - P2
   layers:
   - Default
   - TransparentFX
