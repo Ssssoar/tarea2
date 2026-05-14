@@ -5,6 +5,7 @@ public class Shove : MonoBehaviour{
     [SerializeField] Movement moveComp;
     [SerializeField] GameObject leftShove;
     [SerializeField] GameObject rightShove;
+    [SerializeField] Animator animComp;
 
     [SerializeField] float shoveTime;
     
@@ -42,6 +43,7 @@ public class Shove : MonoBehaviour{
         shoveTimer = shoveTime;
         shoving = true;
         moveComp.Block();
+        animComp.Play("Pushed");
     }
 
     void EndShove(){
